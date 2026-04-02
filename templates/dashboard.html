@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard | SSC-MS{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block page_title %}Sustainability Dashboard{% endblock %}
+{% block page_subtitle %}Campus Environmental Insights — Real-time Analytics{% endblock %}
+{% block content %}
+
+<!-- ===== LOGIN SECTION ===== -->
+<div id="login-section" class="hidden">
+  <div class="login-page">
+    <div class="login-hero">
+      <div class="login-hero-content">
+        <span class="hero-icon">🌍</span>
+        <h2>Smart Sustainable Campus</h2>
+        <p>Track energy, water, and waste metrics to build a greener campus. Empowering institutions with data-driven sustainability decisions.</p>
+      </div>
+      <div class="login-sdg-strip">
+        <div class="login-sdg-chip">💧 SDG 6</div>
+        <div class="login-sdg-chip">⚡ SDG 7</div>
+        <div class="login-sdg-chip">🏙️ SDG 11</div>
+        <div class="login-sdg-chip">♻️ SDG 12</div>
+        <div class="login-sdg-chip">🌡️ SDG 13</div>
+      </div>
+    </div>
+    <div class="login-form-side">
+      <div class="login-form-card">
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle">Sign in to access the sustainability dashboard</p>
+        <div id="login-error" class="login-error"></div>
+        <form onsubmit="event.preventDefault(); doLogin();">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="login-username" class="form-input" placeholder="Enter your username" required autofocus />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-password" class="form-input" placeholder="Enter your password" required />
+          </div>
+          <button type="submit" class="btn-primary-glow" style="margin-top:8px;">Sign In</button>
+        </form>
+        <p style="text-align:center; margin-top:20px; font-size:0.75rem; color:var(--text-muted);">Sustainable Campus Management System v2.0</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD SECTION ===== -->
+<div id="dashboard-section" class="hidden">
+
+  <!-- Action Bar -->
+  <div class="section-header">
+    <div>
+      <h2>Overview</h2>
+      <div class="section-subtitle">Live sustainability metrics for your campus</div>
+    </div>
+    <div class="dropdown-container" style="display:flex; gap:12px; align-items:center;">
+      <input type="month" id="dashboard-month-filter" class="form-input" style="width: auto; padding: 8px 12px; height: 38px; cursor: pointer;" onchange="loadDashboardData()" title="Filter Dashboard by Month" />
+      <button class="btn-add-record" onclick="toggleDropdown('addRecordDropdown')">
+        <span>＋</span> Add Record
+      </button>
+      <div class="dropdown-menu-custom" id="addRecordDropdown">
+        <button class="dropdown-item-custom" onclick="openModal('energyModal'); toggleDropdown('addRecordDropdown');"><span>⚡</span> Energy Usage</button>
+        <button class="dropdown-item-custom" onclick="openModal('waterModal'); toggleDropdown('addRecordDropdown');"><span>💧</span> Water Usage</button>
+        <button class="dropdown-item-custom" onclick="openModal('wasteModal'); toggleDropdown('addRecordDropdown');"><span>♻️</span> Waste Record</button>
+        <div class="dropdown-divider-custom"></div>
+        <button class="dropdown-item-custom" onclick="openModal('staffModal'); toggleDropdown('addRecordDropdown');"><span>👥</span> Create Staff User</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metric Cards -->
+  <div class="metric-grid">
+    <div class="metric-card score animate-in">
+      <div class="metric-icon">🎯</div>
+      <div class="metric-label">Sustainability Score</div>
+      <div class="score-ring-container">
+        <div class="score-ring">
+          <svg viewBox="0 0 90 90">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#0ea5e9"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring-bg" cx="45" cy="45" r="38"/>
+            <circle class="ring-progress" id="score-ring-circle" cx="45" cy="45" r="38" stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+          </svg>
+          <div class="ring-value" id="metric-score">—</div>
+        </div>
+        <div class="score-info">
+          <div class="score-label">Campus Health</div>
+          <div class="score-status" id="score-status-text">Calculating…</div>
+        </div>
+      </div>
+    </div>
+    <div class="metric-card carbon animate-in">
+      <div class="metric-icon">🏭</div>
+      <div class="metric-label">Carbon Emissions</div>
+      <div class="metric-value" id="metric-carbon">—</div>
+      <div class="metric-unit">kg CO₂</div>
+      <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 8px;">Lower emissions improve your score.</div>
+    </div>
+    <div class="metric-card energy animate-in">
+      <div class="metric-icon">⚡</div>
+      <div class="metric-label">Total Energy</div>
+      <div class="metric-value" id="metric-energy">—</div>
+      <div class="metric-unit">kWh consumed</div>
+      <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 8px;">Reduce energy to improve sustainability score.</div>
+    </div>
+    <div class="metric-card water animate-in">
+      <div class="metric-icon">💧</div>
+      <div class="metric-label">Total Water</div>
+      <div class="metric-value" id="metric-water">—</div>
+      <div class="metric-unit">Litres consumed</div>
+      <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 8px;">Track water usage to find leaks.</div>
+    </div>
+    <div class="metric-card waste animate-in">
+      <div class="metric-icon">🗑️</div>
+      <div class="metric-label">Total Waste</div>
+      <div class="metric-value" id="metric-waste">—</div>
+      <div class="metric-unit">kg generated</div>
+      <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 8px;">Minimize waste production.</div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-4 col-md-12">
+      <div class="chart-card animate-in h-100">
+        <div class="chart-header">
+        <div class="chart-title">⚡ Monthly Energy Consumption</div>
+        <span class="chart-tag">kWh</span>
+      </div>
+      <div class="chart-body">
+        <div id="energy-empty" class="chart-empty hidden"><div class="empty-icon">📉</div>No energy data recorded yet</div>
+        <canvas id="energyChart"></canvas>
+      </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="chart-card animate-in h-100">
+        <div class="chart-header">
+        <div class="chart-title">💧 Water Usage Trend</div>
+        <span class="chart-tag">Litres</span>
+      </div>
+      <div class="chart-body">
+        <div id="water-empty" class="chart-empty hidden"><div class="empty-icon">💧</div>No water data recorded yet</div>
+        <canvas id="waterChart"></canvas>
+      </div>
+    </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="chart-card animate-in h-100">
+        <div class="chart-header">
+        <div class="chart-title">♻️ Waste Distribution</div>
+        <span class="chart-tag">kg</span>
+      </div>
+      <div class="chart-body">
+        <div id="waste-empty" class="chart-empty hidden"><div class="empty-icon">🗑️</div>No waste data recorded yet</div>
+        <canvas id="wasteChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDG Alignment & Building Leaderboard Row -->
+  <div class="row g-4 mb-4">
+    <div class="col-xl-6 col-lg-12">
+      <div class="glass-card h-100">
+        <div class="card-header">
+        <h3>🎯 SDG Alignment</h3>
+        <a href="/sdg-goals/" class="btn-outline" style="font-size:0.72rem;">View Details →</a>
+      </div>
+      <div class="card-body" style="padding: 16px;">
+        <div class="sdg-grid" style="grid-template-columns: 1fr;">
+          <div class="sdg-card sdg-6">
+            <div class="sdg-number">SDG 6</div>
+            <div class="sdg-title">Clean Water &amp; Sanitation</div>
+            <div class="sdg-progress-bar"><div class="sdg-progress-fill" id="sdg6-bar" style="width:0%"></div></div>
+            <div class="sdg-metric" id="sdg6-metric">Tracking campus water usage</div>
+          </div>
+          <div class="sdg-card sdg-7">
+            <div class="sdg-number">SDG 7</div>
+            <div class="sdg-title">Affordable &amp; Clean Energy</div>
+            <div class="sdg-progress-bar"><div class="sdg-progress-fill" id="sdg7-bar" style="width:0%"></div></div>
+            <div class="sdg-metric" id="sdg7-metric">Monitoring energy efficiency</div>
+          </div>
+          <div class="sdg-card sdg-13">
+            <div class="sdg-number">SDG 13</div>
+            <div class="sdg-title">Climate Action</div>
+            <div class="sdg-progress-bar"><div class="sdg-progress-fill" id="sdg13-bar" style="width:0%"></div></div>
+            <div class="sdg-metric" id="sdg13-metric">Calculating carbon footprint</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+      <div class="glass-card h-100">
+        <div class="card-header">
+        <h3>🏢 Building Efficiency</h3>
+        <span class="chart-tag">Top Buildings</span>
+      </div>
+      <div class="card-body" style="padding: 0;">
+        <div id="building-empty" class="chart-empty hidden" style="padding: 40px;"><div class="empty-icon">🏢</div>No building data available</div>
+        <table class="leaderboard-table" id="building-table" style="display:none;">
+          <thead><tr><th style="width:50px;">#</th><th>Building</th><th>Energy (kWh)</th><th>CO₂ (kg)</th></tr></thead>
+          <tbody id="building-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Section -->
+  <div class="glass-card animate-in mb-6">
+    <div class="card-header"><h3>📋 Recent Activity</h3></div>
+    <div class="card-body">
+      <div id="activity-empty" class="chart-empty hidden"><div class="empty-icon">📋</div>No recent activity yet. Start by adding some records!</div>
+      <ul class="activity-list" id="activity-list" style="display:none;"></ul>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+var charts = {};
+
+function toggleDropdown(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('show');
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.dropdown-container')) {
+    document.querySelectorAll('.dropdown-menu-custom.show').forEach(function(d) { d.classList.remove('show'); });
+  }
+});
+
+async function loadDashboardData() {
+  var t = getToken();
+  if (!t) { showLoginView(); return; }
+  try {
+    var monthVal = document.getElementById('dashboard-month-filter');
+    var url = '/api/dashboard/';
+    if (monthVal && monthVal.value) url += '?month_filter=' + monthVal.value;
+    var res = await apiFetch(url);
+    if (!res.ok) throw new Error('Auth failed');
+    var data = await res.json();
+    populateMetrics(data);
+    renderCharts(data);
+    populateSDG(data);
+    populateBuildings(data);
+    populateActivity(data);
+    showDashboardView();
+  } catch (err) { showLoginView(); }
+}
+
+function showLoginView() {
+  var sidebar = document.getElementById('sidebar');
+  var navbar = document.getElementById('top-navbar');
+  var main = document.getElementById('main-content');
+  var loginSec = document.getElementById('login-section');
+  var dashSec = document.getElementById('dashboard-section');
+  if (sidebar) sidebar.style.display = 'none';
+  if (navbar) navbar.style.display = 'none';
+  if (main) { main.style.marginLeft = '0'; main.style.paddingTop = '0'; }
+  if (loginSec) loginSec.classList.remove('hidden');
+  if (dashSec) dashSec.classList.add('hidden');
+}
+
+function showDashboardView() {
+  var sidebar = document.getElementById('sidebar');
+  var navbar = document.getElementById('top-navbar');
+  var main = document.getElementById('main-content');
+  var loginSec = document.getElementById('login-section');
+  var dashSec = document.getElementById('dashboard-section');
+  if (sidebar) sidebar.style.display = '';
+  if (navbar) navbar.style.display = '';
+  if (main) { main.style.marginLeft = ''; main.style.paddingTop = ''; }
+  if (loginSec) loginSec.classList.add('hidden');
+  if (dashSec) dashSec.classList.remove('hidden');
+}
+
+function populateMetrics(data) {
+  var sc = data.sustainability_score;
+  var scoreEl = document.getElementById('metric-score');
+  var carbonEl = document.getElementById('metric-carbon');
+  var energyEl = document.getElementById('metric-energy');
+  var waterEl = document.getElementById('metric-water');
+  var wasteEl = document.getElementById('metric-waste');
+  var circumference = 2 * Math.PI * 38;
+  var offset = circumference - (sc / 100) * circumference;
+  var ring = document.getElementById('score-ring-circle');
+  if (ring) { setTimeout(function() { ring.style.strokeDashoffset = offset; }, 200); }
+  if (scoreEl) animateCounter(scoreEl, sc, 1, 1500);
+  if (carbonEl) animateCounter(carbonEl, data.total_carbon_emission, 1, 1200);
+  if (energyEl) animateCounter(energyEl, data.total_energy_consumption, 1, 1200);
+  if (waterEl) animateCounter(waterEl, data.total_water_usage, 1, 1200);
+  var wasteTotal = Object.values(data.waste_by_type).reduce(function(a, b) { return a + b; }, 0);
+  if (wasteEl) animateCounter(wasteEl, wasteTotal, 1, 1200);
+  var statusEl = document.getElementById('score-status-text');
+  if (statusEl) {
+    statusEl.textContent = data.sustainability_status || 'Calculating…';
+    if (sc >= 75) { statusEl.className = 'score-status excellent'; }
+    else if (sc >= 40) { statusEl.className = 'score-status good'; }
+    else { statusEl.className = 'score-status poor'; }
+  }
+}
+
+function createChart(id, type, labels, datasetData, datasetOptions, chartOptions) {
+  if (charts[id]) charts[id].destroy();
+  var ctx = document.getElementById(id);
+  if (!ctx) return;
+  chartOptions = chartOptions || {};
+  var defaults = {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: 'rgba(17,24,39,0.95)', titleColor: '#f1f5f9', bodyColor: '#94a3b8', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, cornerRadius: 8, padding: 12 }
+    },
+    scales: (type !== 'doughnut' && type !== 'pie') ? {
+      x: { grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false }, ticks: { color: '#64748b' } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false }, ticks: { color: '#64748b' }, beginAtZero: true }
+    } : undefined
+  };
+  var config = { type: type, data: { labels: labels, datasets: [Object.assign({ label: datasetOptions.label || '', data: datasetData }, datasetOptions)] }, options: Object.assign({}, defaults, chartOptions) };
+  if (type === 'doughnut' || type === 'pie') {
+    config.options.plugins.legend = { position: 'bottom', labels: { color: '#94a3b8', padding: 16, usePointStyle: true, pointStyleWidth: 8 } };
+    config.options.cutout = type === 'doughnut' ? '70%' : 0;
+  }
+  charts[id] = new Chart(ctx, config);
+}
+
+function renderCharts(d) {
+  if (d.trends.energy.length === 0) {
+    document.getElementById('energy-empty').classList.remove('hidden');
+    document.getElementById('energyChart').style.display = 'none';
+  } else {
+    document.getElementById('energy-empty').classList.add('hidden');
+    document.getElementById('energyChart').style.display = '';
+    createChart('energyChart', 'bar', d.trends.energy.map(function(x){return x.month_trunc;}), d.trends.energy.map(function(x){return x.total;}), {
+      label: 'Energy (kWh)', backgroundColor: 'rgba(139,92,246,0.6)', borderColor: 'rgba(139,92,246,1)', borderWidth: 2, borderRadius: 8, borderSkipped: false, hoverBackgroundColor: 'rgba(139,92,246,0.95)'
+    });
+  }
+  if (d.trends.water.length === 0) {
+    document.getElementById('water-empty').classList.remove('hidden');
+    document.getElementById('waterChart').style.display = 'none';
+  } else {
+    document.getElementById('water-empty').classList.add('hidden');
+    document.getElementById('waterChart').style.display = '';
+    createChart('waterChart', 'line', d.trends.water.map(function(x){return x.month_trunc;}), d.trends.water.map(function(x){return x.total;}), {
+      label: 'Water (L)', borderColor: '#0ea5e9', backgroundColor: 'rgba(14,165,233,0.15)', fill: true, tension: 0.4, pointBackgroundColor: '#0ea5e9', pointBorderColor: '#0a0e17', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7, borderWidth: 3
+    });
+  }
+  var wl = Object.keys(d.waste_by_type);
+  var wv = Object.values(d.waste_by_type);
+  if (wl.length === 0) {
+    document.getElementById('waste-empty').classList.remove('hidden');
+    document.getElementById('wasteChart').style.display = 'none';
+  } else {
+    document.getElementById('waste-empty').classList.add('hidden');
+    document.getElementById('wasteChart').style.display = '';
+    var wc = { DRY: '#fbbf24', WET: '#38bdf8', PLASTIC: '#f87171', E_WASTE: '#a78bfa' };
+    createChart('wasteChart', 'doughnut', wl.map(function(k){return k.replace('_','-');}), wv, {
+      label: 'Waste (kg)', backgroundColor: wl.map(function(k){return wc[k]||'#64748b';}), borderColor: 'transparent', hoverOffset: 8
+    });
+  }
+}
+
+function populateSDG(data) {
+  var waterTotal = data.total_water_usage || 0;
+  var waterProg = Math.min(100, waterTotal > 0 ? 70 : 0);
+  var s6b = document.getElementById('sdg6-bar');
+  var s6m = document.getElementById('sdg6-metric');
+  if (s6b) setTimeout(function(){ s6b.style.width = waterProg + '%'; }, 500);
+  if (s6m) s6m.textContent = waterTotal > 0 ? 'Tracking ' + waterTotal.toFixed(0) + ' L of campus water' : 'Start logging water data';
+  var energyTotal = data.total_energy_consumption || 0;
+  var energyProg = Math.min(100, energyTotal > 0 ? 65 : 0);
+  var s7b = document.getElementById('sdg7-bar');
+  var s7m = document.getElementById('sdg7-metric');
+  if (s7b) setTimeout(function(){ s7b.style.width = energyProg + '%'; }, 600);
+  if (s7m) s7m.textContent = energyTotal > 0 ? 'Monitoring ' + energyTotal.toFixed(0) + ' kWh of consumption' : 'Start logging energy data';
+  var carbon = data.total_carbon_emission || 0;
+  var carbonProg = Math.min(100, carbon > 0 ? 55 : 0);
+  var s13b = document.getElementById('sdg13-bar');
+  var s13m = document.getElementById('sdg13-metric');
+  if (s13b) setTimeout(function(){ s13b.style.width = carbonProg + '%'; }, 700);
+  if (s13m) s13m.textContent = carbon > 0 ? carbon.toFixed(1) + ' kg CO2 footprint measured' : 'Add energy data to track emissions';
+}
+
+function populateBuildings(data) {
+  var buildings = data.building_breakdown || [];
+  var tableEl = document.getElementById('building-table');
+  var emptyEl = document.getElementById('building-empty');
+  var tbody = document.getElementById('building-tbody');
+  if (buildings.length === 0) { if (emptyEl) emptyEl.classList.remove('hidden'); if (tableEl) tableEl.style.display = 'none'; return; }
+  if (emptyEl) emptyEl.classList.add('hidden');
+  if (tableEl) tableEl.style.display = '';
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  buildings.slice(0, 6).forEach(function(b, i) {
+    var rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'default';
+    var row = document.createElement('tr');
+    row.innerHTML = '<td><span class="leaderboard-rank ' + rc + '">' + (i+1) + '</span></td><td style="font-weight:600;color:var(--text-primary);">' + b.building_name + '</td><td>' + b.total_energy.toFixed(1) + '</td><td>' + b.total_carbon.toFixed(1) + '</td>';
+    tbody.appendChild(row);
+  });
+}
+
+function populateActivity(data) {
+  var list = document.getElementById('activity-list');
+  var emptyEl = document.getElementById('activity-empty');
+  var activities = data.recent_activity || [];
+  if (activities.length === 0) { if (emptyEl) emptyEl.classList.remove('hidden'); if (list) list.style.display = 'none'; return; }
+  if (emptyEl) emptyEl.classList.add('hidden');
+  if (list) list.style.display = '';
+  if (!list) return;
+  list.innerHTML = '';
+  var iconMap = { energy: '⚡', water: '💧', waste: '♻️' };
+  activities.slice(0, 8).forEach(function(act) {
+    var li = document.createElement('li');
+    li.className = 'activity-item';
+    li.innerHTML = '<div class="activity-icon ' + act.type + '">' + (iconMap[act.type] || '📌') + '</div><div><div class="activity-text"><strong>' + (act.building || act.waste_type || 'Record') + '</strong> — ' + act.description + '</div><div class="activity-time">' + (act.time_ago || '') + '</div></div>';
+    list.appendChild(li);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.getElementById('dashboard-section')) { loadDashboardData(); }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}SDG Goals | SSC-MS{% endblock %}
+{% block nav_sdg %}active{% endblock %}
+{% block page_title %}UN Sustainable Development Goals{% endblock %}
+{% block page_subtitle %}Our campus alignment with global sustainability objectives{% endblock %}
+{% block content %}
+
+<div id="login-redirect-check"></div>
+
+<div id="sdg-content" class="hidden">
+
+  <!-- Intro Section -->
+  <div class="glass-card mb-6 animate-in">
+    <div class="card-body" style="padding: 28px;">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+        <span style="font-size: 2.5rem;">🌍</span>
+        <div>
+          <h2 style="font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em;">Sustainable Development Goals</h2>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">The SSC-MS aligns with <strong style="color: var(--text-accent);">5 United Nations SDGs</strong>, transforming our campus into a model of environmental responsibility. Every data point you log contributes to these global goals.</p>
+        </div>
+      </div>
+      <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">FILTER PROGRESS BY MONTH:</span>
+        <input type="month" id="sdg-month-filter" class="form-input" style="width: auto; padding: 6px 12px; height: 32px; font-size: 0.8rem; cursor: pointer;" onchange="loadSDGData()" title="Filter by Month" />
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDG Cards Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px;">
+
+    <!-- SDG 6 -->
+    <div class="sdg-page-card animate-in" style="border-left: 4px solid #26bde2;">
+      <div class="sdg-icon-large">💧</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="background:rgba(38,189,226,0.15); color:#7dd3e8; padding:4px 12px; border-radius:6px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">SDG 6</span>
+      </div>
+      <div class="sdg-goal-title" style="color: #7dd3e8;">Clean Water &amp; Sanitation</div>
+      <p class="sdg-description">Ensure availability and sustainable management of water and sanitation for all. Our campus tracks water usage across every building to identify leaks, reduce unnecessary consumption, and promote conservation strategies.</p>
+      <div class="sdg-campus-action">🎯 Campus Action: Real-time water usage monitoring per building</div>
+      <div style="margin-top: 14px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;"><span>Tracking Progress</span><span id="sdg6-pct">—</span></div>
+        <div class="sdg-progress-bar" style="height:6px; background:rgba(38,189,226,0.15);"><div class="sdg-progress-fill" id="sdg6-page-bar" style="width:0%; background:#26bde2;"></div></div>
+      </div>
+    </div>
+
+    <!-- SDG 7 -->
+    <div class="sdg-page-card animate-in" style="border-left: 4px solid #fcc30b;">
+      <div class="sdg-icon-large">⚡</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="background:rgba(252,195,11,0.15); color:#fcd34d; padding:4px 12px; border-radius:6px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">SDG 7</span>
+      </div>
+      <div class="sdg-goal-title" style="color: #fcd34d;">Affordable &amp; Clean Energy</div>
+      <p class="sdg-description">Ensure access to affordable, reliable, sustainable and modern energy for all. By monitoring electricity consumption dynamically, our system highlights high-usage areas, encouraging the transition to energy-efficient practices and renewable sources.</p>
+      <div class="sdg-campus-action">🎯 Campus Action: Monthly energy consumption tracking &amp; analysis</div>
+      <div style="margin-top: 14px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;"><span>Tracking Progress</span><span id="sdg7-pct">—</span></div>
+        <div class="sdg-progress-bar" style="height:6px; background:rgba(252,195,11,0.15);"><div class="sdg-progress-fill" id="sdg7-page-bar" style="width:0%; background:#fcc30b;"></div></div>
+      </div>
+    </div>
+
+    <!-- SDG 11 -->
+    <div class="sdg-page-card animate-in" style="border-left: 4px solid #fd9d24;">
+      <div class="sdg-icon-large">🏙️</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="background:rgba(253,157,36,0.15); color:#fdba74; padding:4px 12px; border-radius:6px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">SDG 11</span>
+      </div>
+      <div class="sdg-goal-title" style="color: #fdba74;">Sustainable Cities &amp; Communities</div>
+      <p class="sdg-description">Make cities and human settlements inclusive, safe, resilient and sustainable. Treating the campus as a micro-city, our platform fosters sustainable infrastructure management and minimizes the collective environmental footprint of the institution.</p>
+      <div class="sdg-campus-action">🎯 Campus Action: Integrated environmental dashboard for community oversight</div>
+      <div style="margin-top: 14px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(
+--text-muted); margin-bottom:6px;"><span>Tracking Progress</span><span id="sdg11-pct">—</span></div>
+        <div class="sdg-progress-bar" style="height:6px; background:rgba(253,157,36,0.15);"><div class="sdg-progress-fill" id="sdg11-page-bar" style="width:0%; background:#fd9d24;"></div></div>
+      </div>
+    </div>
+
+    <!-- SDG 12 -->
+    <div class="sdg-page-card animate-in" style="border-left: 4px solid #bf8b2e;">
+      <div class="sdg-icon-large">♻️</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="background:rgba(191,139,46,0.15); color:#d4a84b; padding:4px 12px; border-radius:6px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">SDG 12</span>
+      </div>
+      <div class="sdg-goal-title" style="color: #d4a84b;">Responsible Consumption &amp; Production</div>
+      <p class="sdg-description">Ensure sustainable consumption and production patterns. Our waste management module tracks digital records of dry, wet, electronic, and plastic waste, promoting recycling initiatives and responsible disposal practices across the campus.</p>
+      <div class="sdg-campus-action">🎯 Campus Action: Categorized waste tracking with recycling metrics</div>
+      <div style="margin-top: 14px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;"><span>Tracking Progress</span><span id="sdg12-pct">—</span></div>
+        <div class="sdg-progress-bar" style="height:6px; background:rgba(191,139,46,0.15);"><div class="sdg-progress-fill" id="sdg12-page-bar" style="width:0%; background:#bf8b2e;"></div></div>
+      </div>
+    </div>
+
+    <!-- SDG 13 -->
+    <div class="sdg-page-card animate-in" style="border-left: 4px solid #3f7e44;">
+      <div class="sdg-icon-large">🌡️</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="background:rgba(63,126,68,0.15); color:#86d98c; padding:4px 12px; border-radius:6px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">SDG 13</span>
+      </div>
+      <div class="sdg-goal-title" style="color: #86d98c;">Climate Action</div>
+      <p class="sdg-description">Take urgent action to combat climate change and its impacts. Our system automatically converts energy usage into measurable carbon emissions, providing clear metrics to help the campus systematically reduce its greenhouse gas output.</p>
+      <div class="sdg-campus-action">🎯 Campus Action: Automated carbon emission calculation &amp; tracking</div>
+      <div style="margin-top: 14px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;"><span>Tracking Progress</span><span id="sdg13-pct">—</span></div>
+        <div class="sdg-progress-bar" style="height:6px; background:rgba(63,126,68,0.15);"><div class="sdg-progress-fill" id="sdg13-page-bar" style="width:0%; background:#3f7e44;"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Info Card -->
+  <div class="glass-card mt-2 animate-in" style="margin-top: 24px;">
+    <div class="card-body" style="padding: 24px; text-align: center;">
+      <p style="font-size: 0.82rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.7;">The SSC-MS demonstrates that modern web technology can be a <strong style="color: var(--text-accent);">powerful tool for driving meaningful climate action</strong>. Every record you log contributes to our campus sustainability story.</p>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function loadSDGData() {
+  try {
+    var monthVal = document.getElementById('sdg-month-filter');
+    var url = '/api/dashboard/';
+    if (monthVal && monthVal.value) url += '?month_filter=' + monthVal.value;
+    var res = await apiFetch(url);
+    if (res.ok) {
+      var data = await res.json();
+      var water = data.total_water_usage || 0;
+      var energy = data.total_energy_consumption || 0;
+      var carbon = data.total_carbon_emission || 0;
+      var wasteTotal = Object.values(data.waste_by_type || {}).reduce(function(a,b){return a+b;}, 0);
+      var wp = water > 0 ? Math.min(92, 40 + Math.log10(water + 1) * 15) : 0;
+      var ep = energy > 0 ? Math.min(88, 35 + Math.log10(energy + 1) * 15) : 0;
+      var sp = data.sustainability_score || 0;
+      var wsp = wasteTotal > 0 ? Math.min(85, 30 + Math.log10(wasteTotal + 1) * 18) : 0;
+      var cp = carbon > 0 ? Math.min(78, 25 + Math.log10(carbon + 1) * 15) : 0;
+      
+      setBar('sdg6-page-bar', wp); setText('sdg6-pct', wp.toFixed(0) + '%');
+      setBar('sdg7-page-bar', ep); setText('sdg7-pct', ep.toFixed(0) + '%');
+      setBar('sdg11-page-bar', sp); setText('sdg11-pct', sp.toFixed(0) + '%');
+      setBar('sdg12-page-bar', wsp); setText('sdg12-pct', wsp.toFixed(0) + '%');
+      setBar('sdg13-page-bar', cp); setText('sdg13-pct', cp.toFixed(0) + '%');
+    }
+  } catch (e) { /* ignore */ }
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+  if (!isLoggedIn()) { window.location.href = '/'; return; }
+  var content = document.getElementById('sdg-content');
+  if (content) content.classList.remove('hidden');
+  loadSDGData();
+});
+function setBar(id, pct) { var el = document.getElementById(id); if (el) el.style.width = pct + '%'; }
+function setText(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
+</script>
+{% endblock %}

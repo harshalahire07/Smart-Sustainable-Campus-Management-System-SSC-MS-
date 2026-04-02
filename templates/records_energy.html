@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Energy Records | SSC-MS{% endblock %}
+{% block nav_energy %}active{% endblock %}
+{% block page_title %}Energy Usage Records{% endblock %}
+{% block page_subtitle %}Track and manage campus electricity consumption{% endblock %}
+{% block content %}
+
+<div id="records-content" class="hidden">
+  <div class="section-header">
+    <div>
+      <h2>⚡ Energy Records</h2>
+      <div class="section-subtitle">View and manage all electricity usage logs across campus buildings</div>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <input type="text" id="search-filter" class="form-input" style="width: 180px; padding: 8px 12px; height: 38px;" placeholder="Search building..." oninput="debounceSearch()" />
+      <input type="month" id="month-filter" class="form-input" style="width: auto; padding: 8px 12px; height: 38px; cursor: pointer;" onchange="loadRecordsData()" title="Filter by Month" />
+      <button class="btn-outline" style="height: 38px; padding: 0 16px;" onclick="exportCSV('energy')">⬇️ Export CSV</button>
+      <button class="btn-add-record" onclick="openModal('energyModal')"><span>＋</span> Add Energy Record</button>
+    </div>
+  </div>
+
+  <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px;">
+    <div class="metric-card energy animate-in">
+      <div class="metric-label">Total Consumption</div>
+      <div class="metric-value" id="energy-total">—</div>
+      <div class="metric-unit">kWh</div>
+    </div>
+    <div class="metric-card carbon animate-in">
+      <div class="metric-label">Total CO₂ Emissions</div>
+      <div class="metric-value" id="energy-carbon">—</div>
+      <div class="metric-unit">kg CO₂</div>
+    </div>
+    <div class="metric-card score animate-in">
+      <div class="metric-label">Total Records</div>
+      <div class="metric-value" id="energy-count">—</div>
+      <div class="metric-unit">entries</div>
+    </div>
+  </div>
+
+  <div class="glass-card animate-in">
+    <div class="card-header"><h3>All Energy Records</h3></div>
+    <div class="card-body" style="padding: 0;">
+      <div id="energy-table-empty" class="chart-empty hidden"><div class="empty-icon">⚡</div>No energy records found. Add your first record!</div>
+      <div class="data-table-wrapper">
+        <table class="data-table" id="energy-table" style="display:none;">
+          <thead><tr><th>Building</th><th>Units (kWh)</th><th>CO₂ (kg)</th><th>Month</th><th style="width:50px;"></th></tr></thead>
+          <tbody id="energy-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let searchTimeout;
+function debounceSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(loadRecordsData, 500);
+}
+
+async function loadRecordsData() {
+  try {
+    var monthVal = document.getElementById('month-filter').value;
+    var searchVal = document.getElementById('search-filter') ? document.getElementById('search-filter').value : '';
+    var url = '/api/energy/?';
+    if (monthVal) url += 'month_filter=' + monthVal + '&';
+    if (searchVal) url += 'building=' + searchVal;
+    
+    var res = await apiFetch(url);
+    if (!res.ok) throw new Error();
+    var records = await res.json();
+    var table = document.getElementById('energy-table');
+    var empty = document.getElementById('energy-table-empty');
+    var tbody = document.getElementById('energy-tbody');
+    if (records.length === 0) { if (empty) empty.classList.remove('hidden'); if (table) table.style.display = 'none'; }
+    else { if (empty) empty.classList.add('hidden'); if (table) table.style.display = ''; }
+    var totalEnergy = 0, totalCarbon = 0;
+    records.forEach(function(r) { totalEnergy += r.units_consumed || 0; totalCarbon += r.carbon_emission || 0; });
+    var tot = document.getElementById('energy-total');
+    var carb = document.getElementById('energy-carbon');
+    var cnt = document.getElementById('energy-count');
+    if (tot) animateCounter(tot, totalEnergy, 1);
+    if (carb) animateCounter(carb, totalCarbon, 1);
+    if (cnt) animateCounter(cnt, records.length, 0);
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    records.forEach(function(r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td style="font-weight:600;color:var(--text-primary);">' + r.building_name + '</td><td>' + r.units_consumed + '</td><td>' + (r.carbon_emission ? r.carbon_emission.toFixed(2) : '—') + '</td><td>' + r.month + '</td><td><button class="delete-btn" onclick="deleteRecord(\'energy\',' + r.id + ')" title="Delete">🗑️</button></td>';
+      tbody.appendChild(tr);
+    });
+  } catch (e) { showToast('Could not load energy records.', 'error'); }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  if (!isLoggedIn()) { window.location.href = '/'; return; }
+  document.getElementById('records-content').classList.remove('hidden');
+  loadRecordsData();
+});
+</script>
+{% endblock %}

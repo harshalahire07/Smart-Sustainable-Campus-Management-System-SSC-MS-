@@ -1,0 +1,38 @@
+Creating test database for alias 'default'...
+
+.FFF
+======================================================================
+FAIL: test_post_and_get_as_staff (energy.tests.EnergyUsageAPITests.test_post_and_get_as_staff)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\hda00\Desktop\Projects\ES_Project\energy\tests.py", line 41, in test_post_and_get_as_staff
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 404 != 200
+
+======================================================================
+FAIL: test_put_and_delete_as_admin (energy.tests.EnergyUsageAPITests.test_put_and_delete_as_admin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\hda00\Desktop\Projects\ES_Project\energy\tests.py", line 72, in test_put_and_delete_as_admin
+    self.assertEqual(res_put.status_code, status.HTTP_200_OK)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 404 != 200
+
+======================================================================
+FAIL: test_put_and_delete_as_staff (energy.tests.EnergyUsageAPITests.test_put_and_delete_as_staff)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\hda00\Desktop\Projects\ES_Project\energy\tests.py", line 60, in test_put_and_delete_as_staff
+    self.assertEqual(res_put.status_code, status.HTTP_403_FORBIDDEN)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 404 != 403
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.036s
+
+FAILED (failures=3)
+Destroying test database for alias 'default'...
+
+Found 4 test(s).
+System check identified no issues (0 silenced).
