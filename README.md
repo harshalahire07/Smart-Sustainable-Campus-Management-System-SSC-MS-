@@ -6,6 +6,8 @@
 [![Django](https://img.shields.io/badge/Django-4.2+-092e20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![SDG](https://img.shields.io/badge/SDG-Alignment-emerald?style=for-the-badge&logo=un-environment-programme&logoColor=white)](https://sdgs.un.org/goals)
+[![GitHub size](https://img.shields.io/github/repo-size/harshalahire07/Smart-Sustainable-Campus-Management-System-SSC-MS-?style=for-the-badge&color=blueviolet)](https://github.com/harshalahire07/Smart-Sustainable-Campus-Management-System-SSC-MS-)
+[![Last Commit](https://img.shields.io/github/last-commit/harshalahire07/Smart-Sustainable-Campus-Management-System-SSC-MS-?style=for-the-badge&color=orange)](https://github.com/harshalahire07/Smart-Sustainable-Campus-Management-System-SSC-MS-)
 
 ## 🎯 Project Overview
 
@@ -125,6 +127,12 @@ Visit `http://127.0.0.1:8000/`
 | Energy Tracking | waste Analytics |
 | :---: | :---: |
 | ![Energy](screenshots/energy.png) | ![Waste](screenshots/waste.png) |
+
+---
+
+## 🛠️ Portfolio Notes & Performance
+
+This project was built with **scalability** and **security** in mind. The three-tier architecture ensures that the presentation and data layers are decoupled, allowing for future migrations (e.g., to PostgreSQL or React) with minimal code changes. All API endpoints are protected by **JWT**, and database-level calculations ensure zero latency in sustainability scoring.
 
 ---
 
