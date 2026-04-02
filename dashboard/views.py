@@ -9,7 +9,12 @@ from rest_framework.permissions import IsAuthenticated
 from energy.models import EnergyUsage
 from water.models import WaterUsage
 from waste.models import WasteRecord
-from .utils import calculate_sustainability_score, get_sustainability_status, get_monthly_trends
+from .utils import (
+    calculate_sustainability_score, 
+    get_sustainability_status, 
+    get_monthly_trends,
+    time_ago_str
+)
 
 
 def dashboard_view(request):
@@ -83,7 +88,7 @@ class DashboardAPIView(APIView):
                 'type': 'energy',
                 'building': rec.building_name,
                 'description': f'{rec.units_consumed} kWh consumed in {rec.month.strftime("%b %Y")}',
-                'time_ago': _time_ago(rec.month, now),
+                'time_ago': time_ago_str(rec.month, now),
                 'sort_key': rec.id
             })
 
@@ -92,7 +97,7 @@ class DashboardAPIView(APIView):
                 'type': 'water',
                 'building': rec.building_name,
                 'description': f'{rec.litres_consumed} litres consumed on {rec.date.strftime("%b %d, %Y")}',
-                'time_ago': _time_ago(rec.date, now),
+                'time_ago': time_ago_str(rec.date, now),
                 'sort_key': rec.id
             })
 
@@ -101,7 +106,7 @@ class DashboardAPIView(APIView):
                 'type': 'waste',
                 'waste_type': rec.get_waste_type_display(),
                 'description': f'{rec.quantity_kg} kg of {rec.get_waste_type_display()} waste on {rec.date.strftime("%b %d, %Y")}',
-                'time_ago': _time_ago(rec.date, now),
+                'time_ago': time_ago_str(rec.date, now),
                 'sort_key': rec.id
             })
 
@@ -125,27 +130,3 @@ class DashboardAPIView(APIView):
         })
 
 
-def _time_ago(date_val, now):
-    """Generate a simple time-ago string from a date."""
-    try:
-        if hasattr(date_val, 'date'):
-            diff = now.date() - date_val.date()
-        else:
-            diff = now.date() - date_val
-        days = diff.days
-        if days == 0:
-            return 'Today'
-        elif days == 1:
-            return 'Yesterday'
-        elif days < 7:
-            return f'{days} days ago'
-        elif days < 30:
-            weeks = days // 7
-            return f'{weeks} week{"s" if weeks > 1 else ""} ago'
-        elif days < 365:
-            months = days // 30
-            return f'{months} month{"s" if months > 1 else ""} ago'
-        else:
-            return f'{days // 365} year{"s" if days // 365 > 1 else ""} ago'
-    except Exception:
-        return ''

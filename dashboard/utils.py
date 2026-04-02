@@ -28,3 +28,28 @@ def get_monthly_trends(queryset, date_field, value_field):
             t['month_trunc'] = t['month_trunc'].strftime('%Y-%m')
         t['total'] = float(t['total'] or 0)
     return trends
+
+def time_ago_str(date_val, now):
+    """Generate a simple time-ago string from a date."""
+    try:
+        if hasattr(date_val, 'date'):
+            diff = now.date() - date_val.date()
+        else:
+            diff = now.date() - date_val
+        days = diff.days
+        if days <= 0:
+            return 'Today'
+        elif days == 1:
+            return 'Yesterday'
+        elif days < 7:
+            return f'{days} days ago'
+        elif days < 30:
+            weeks = days // 7
+            return f'{weeks} week{"s" if weeks > 1 else ""} ago'
+        elif days < 365:
+            months = days // 30
+            return f'{months} month{"s" if months > 1 else ""} ago'
+        else:
+            return f'{days // 365} year{"s" if days // 365 > 1 else ""} ago'
+    except Exception:
+        return ''
