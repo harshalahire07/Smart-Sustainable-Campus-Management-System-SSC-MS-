@@ -50,3 +50,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local test artifacts
+my_test_results.txt
