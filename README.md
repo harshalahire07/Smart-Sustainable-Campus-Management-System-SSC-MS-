@@ -143,6 +143,8 @@ This command creates sample records for dashboard visualization and creates demo
 
 If these users already exist in your database, keep using your existing credentials.
 
+For real deployments, rotate these demo passwords immediately and manage credentials via environment variables.
+
 ---
 
 ## 📸 Screenshots Section
@@ -151,7 +153,7 @@ If these users already exist in your database, keep using your existing credenti
 | :-------------------------------------: | :---------------------------------: |
 | ![Dashboard](screenshots/dashboard.png) | ![Records](screenshots/records.png) |
 
-|          Energy Tracking          |         waste Analytics         |
+|          Energy Tracking          |         Waste Analytics         |
 | :-------------------------------: | :-----------------------------: |
 | ![Energy](screenshots/energy.png) | ![Waste](screenshots/waste.png) |
 
