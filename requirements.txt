@@ -1,3 +1,5 @@
 django>=4.2
 djangorestframework>=3.14
 djangorestframework-simplejwt>=5.3
+pywebview>=5.1
+pyinstaller>=6.0
