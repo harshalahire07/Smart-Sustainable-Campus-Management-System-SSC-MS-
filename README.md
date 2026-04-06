@@ -44,6 +44,8 @@ This project is built to support the United Nations **Sustainable Development Go
 - **Authentication:** JWT (JSON Web Tokens) with SimpleJWT
 - **Database:** SQLite (Lightweight / Portable)
 - **Frontend:** Vanilla CSS, Bootstrap 5, Chart.js
+- **Desktop Runtime:** PyWebView launcher (optional desktop window mode)
+- **Packaging:** PyInstaller support for distributable executable builds
 - **Architecture:** Decoupled Three-Tier Architecture
 
 ---
@@ -70,15 +72,18 @@ graph TD
 ## 🏁 Setup Instructions
 
 ### 1. Prerequisite Checks
+
 Ensure Python 3.10+ is installed on your local machine.
 
 ### 2. Fork & Clone
+
 ```bash
 git clone https://github.com/harshalahire07/Smart-Sustainable-Campus-Management-System-SSC-MS-.git
 cd ES_Project
 ```
 
 ### 3. Initialize Environment
+
 ```bash
 # Windows
 python -m venv venv
@@ -90,11 +95,13 @@ source venv/bin/activate
 ```
 
 ### 4. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 5. Migration & First User
+
 ```bash
 python manage.py makemigrations
 python manage.py migrate
@@ -102,30 +109,50 @@ python manage.py createsuperuser
 ```
 
 ### 6. Launch Application
+
 ```bash
 python manage.py runserver
 ```
+
 Visit `http://127.0.0.1:8000/`
+
+### 7. Optional Desktop App Mode
+
+```bash
+python run_app.py
+```
+
+This starts Django in the background and opens the system desktop window using PyWebView.
+
+### 8. Optional Demo Data Seeding
+
+```bash
+python manage.py seed_data
+```
+
+This command creates sample records for dashboard visualization and creates demo users if they do not already exist.
 
 ---
 
 ## 🧑‍💻 Demo Credentials
 
-| Role | Username | Password | Access Level |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin` | `password123` | Full control: delete logs, add staff |
-| **Staff** | `staff` | `password123` | Log data, view analytics. No delete/user management. |
+| Role      | Username | Password   | Access Level                                         |
+| :-------- | :------- | :--------- | :--------------------------------------------------- |
+| **Admin** | `admin`  | `admin123` | Full control: delete logs, add staff                 |
+| **Staff** | `staff`  | `staff123` | Log data, view analytics. No delete/user management. |
+
+If these users already exist in your database, keep using your existing credentials.
 
 ---
 
 ## 📸 Screenshots Section
 
-| Dashboard Home | Sustainability Records |
-| :---: | :---: |
+|             Dashboard Home              |       Sustainability Records        |
+| :-------------------------------------: | :---------------------------------: |
 | ![Dashboard](screenshots/dashboard.png) | ![Records](screenshots/records.png) |
 
-| Energy Tracking | waste Analytics |
-| :---: | :---: |
+|          Energy Tracking          |         waste Analytics         |
+| :-------------------------------: | :-----------------------------: |
 | ![Energy](screenshots/energy.png) | ![Waste](screenshots/waste.png) |
 
 ---
